@@ -87,14 +87,6 @@ if "daily_suggestion" not in st.session_state:
         [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
     )
 
-st.markdown(f"**Try this today:** {st.session_state.daily_suggestion}")
-
-# Form to check off or get a new challenge
-with st.form("daily_challenge_form"):
-    completed = st.checkbox("I completed this act!")
-    submit_daily = st.form_submit_button("Submit")
-    new_challenge = st.form_submit_button("Get a New Challenge")
-
     if submit_daily and completed:
         new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.daily_suggestion]})
         df = pd.read_csv(DATA_FILE)
@@ -128,6 +120,16 @@ if streak in [5, 10, 30]:
 
 # Daily kindness challenge
 st.subheader("Today's Kindness Challenge")
+
+st.markdown(f"**Try this today:** {st.session_state.daily_suggestion}")
+
+# Form to check off or get a new challenge
+with st.form("daily_challenge_form"):
+    completed = st.checkbox("I completed this act!")
+    submit_daily = st.form_submit_button("Submit")
+    new_challenge = st.form_submit_button("Get a New Challenge")
+
+
 daily_suggestion = random.choice(
     [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
 )
