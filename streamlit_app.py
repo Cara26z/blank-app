@@ -12,7 +12,7 @@ if not os.path.exists(DATA_FILE):
     df = pd.DataFrame(columns=["Date", "Act of Kindness"])
     df.to_csv(DATA_FILE, index=False)
 
-# Define kindness suggestions based on budget and context
+# Define kindness suggestions based on budget and context, without monetary references
 KINDNESS_SUGGESTIONS = {
     "Free": {
         "From Home": [
@@ -34,7 +34,7 @@ KINDNESS_SUGGESTIONS = {
         "From Home": [
             "Send a small care package with snacks to a friend.",
             "Buy and send an e-gift card for coffee to cheer someone up.",
-            "Order a small plant online for a loved one to brighten their space).",
+            "Order a small plant online for a loved one to brighten their space.",
             "Donate a small amount to a local charity online.",
             "Purchase and send a digital book to inspire someone."
         ],
@@ -42,7 +42,7 @@ KINDNESS_SUGGESTIONS = {
             "Buy a coffee for the person behind you in line.",
             "Leave a generous tip for a server or barista.",
             "Purchase a small treat for a coworker or neighbor.",
-            "Buy flowers to give to someone you meet).",
+            "Buy flowers to give to someone you meet.",
             "Pay for a stranger's parking meter or bus fare."
         ]
     },
@@ -68,18 +68,21 @@ KINDNESS_SUGGESTIONS = {
 def calculate_streak(df):
     if df.empty:
         return 0
-    df['Date'] = pd.to_datetime(df['Date']).dt.date
-    sorted_dates = df['Date'].sort_values(ascending=False).unique()
-    streak = 0
-    today = date.today()
-    current = today
-    for d in sorted_dates:
-        if d == current:
-            streak += 1
-            current = current - pd.Timedelta(days=1)
-        else:
-            break
-    return streak
+    try:
+        df['Date'] = pd.to_datetime(df['Date'], errors='coerce').dt.date
+        sorted_dates = df['Date'].dropna().sort_values(ascending=False).unique()
+        streak = 0
+        today = date.today()
+        current = today
+        for d in sorted_dates:
+            if d == current:
+                streak += 1
+                current -= pd.Timedelta(days=1)
+            else:
+                break
+        return streak
+    except Exception:
+        return 0
 
 # Custom CSS for colorful styling
 st.markdown("""
@@ -150,7 +153,7 @@ st.write(f"**Try this today:** {st.session_state.daily_suggestion}")
 with st.form("daily_challenge_form"):
     completed = st.checkbox("I completed this act!")
     submit_daily = st.form_submit_button("Submit")
- |   new_challenge = st.form_submit_button("Get a New Challenge")
+    new_challenge = st.form_submit_button("Get a New Challenge")
 
     if submit_daily and completed:
         new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.daily_suggestion]})
@@ -209,6 +212,4 @@ st.markdown('<p class="quote">"No act of kindness, no matter how small, is ever 
 
 # Add footer with credit
 st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown('<p class="footer">Made by Cara</p>', unsafe_allow_html=True)
-
-
+st.markdown('<p class="footer">This App was made with love and pure intention by Cara</p>', unsafe_allow_html=True)
