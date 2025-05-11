@@ -153,7 +153,6 @@ st.write(f"**Try this today:** {st.session_state.daily_suggestion}")
 with st.form("daily_challenge_form"):
     completed = st.checkbox("I completed this act!")
     submit_daily = st.form_submit_button("Submit")
-    new_challenge = st.form_submit_button("Get a New Challenge")
 
     if submit_daily and completed:
         new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.daily_suggestion]})
@@ -188,7 +187,7 @@ with st.form("suggestion_form"):
             st.error("No suggestions available for this combination.")
 
 # Log a kind act
-st.markdown('<p class="subheader">Log Your Kind Act</p>', unsafe_allow_html=True)
+st.markdown('<p class="subheader">Log Your Own Kind Act</p>', unsafe_allow_html=True)
 with st.form("log_form"):
     act = st.text_area("Describe the kind act you performed:", placeholder="e.g., Bought coffee for a stranger")
     submit_log = st.form_submit_button("Log Act")
