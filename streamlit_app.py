@@ -84,14 +84,19 @@ def calculate_streak(df):
     except Exception:
         return 0
 
-# Custom CSS for colorful styling
+# Custom CSS for colorful styling and prettier title
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
     .main-title {
-        color: #e91e63;
-        font-size: 2.5em;
+        font-family: 'Pacifico', cursive;
+        font-size: 3.5em;
         text-align: center;
-        font-weight: bold;
+        background: linear-gradient(45deg, #e91e63, #f06292);
+        -webkit-background-clip: text;
+        color: transparent;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        margin-bottom: 10px;
     }
     .subheader {
         color: #2196f3;
@@ -146,36 +151,29 @@ if "daily_suggestion" not in st.session_state:
     st.session_state.daily_suggestion = random.choice(
         [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
     )
-if "completed" not in st.session_state:
-    st.session_state.completed = False
 
 st.write(f"**Try this today:** {st.session_state.daily_suggestion}")
 
 # Form to check off or get a new challenge
-with st.form("daily_challenge_form"):
-    st.session_state.completed = st.checkbox("I completed this act!", value=st.session_state.completed)
+with st.form("daily_challenge_form", clear_on_submit=True):
+    completed = st.checkbox("I completed this act!", key="daily_completed")
     submit_daily = st.form_submit_button("Submit")
     new_challenge = st.form_submit_button("Get a New Challenge")
 
-    if submit_daily and st.session_state.completed:
+    if submit_daily and completed:
         new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.daily_suggestion]})
         df = pd.read_csv(DATA_FILE)
         df = pd.concat([df, new_act], ignore_index=True)
         df.to_csv(DATA_FILE, index=False)
-        st.success("Kind act logged successfully!")
-        # Reset daily suggestion and checkbox
         st.session_state.daily_suggestion = random.choice(
             [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
         )
-        st.session_state.completed = False
-        st.experimental_rerun()
+        st.success("Kind act logged successfully!")
 
     if new_challenge:
         st.session_state.daily_suggestion = random.choice(
             [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
         )
-        st.session_state.completed = False
-        st.experimental_rerun()
 
 # Get a tailored suggestion
 st.markdown('<p class="subheader">Get a Custom Kindness Idea</p>', unsafe_allow_html=True)
@@ -217,4 +215,4 @@ st.markdown('<p class="quote">"No act of kindness, no matter how small, is ever 
 
 # Add footer with credit
 st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown('<p class="footer">Made by Cara</p>', unsafe_allow_html=True)
+st.markdown('<p class="footer">Made with love by Cara</p>', unsafe_allow_html=True)
