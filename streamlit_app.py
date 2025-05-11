@@ -149,7 +149,7 @@ with st.form("suggestion_form"):
             st.error("No suggestions available for this combination.")
 
 # Log a kind act
-st.subheader("Log Your Kind Act")
+st.subheader("Log Your Own Kind Act")
 with st.form("log_form"):
     act = st.text_area("Describe the kind act you performed:", placeholder="e.g., Bought coffee for a stranger")
     submit_log = st.form_submit_button("Log Act")
