@@ -118,8 +118,7 @@ if streak in [5, 10, 30]:
     st.balloons()
     st.success(f"Wow! You've reached a {streak}-day kindness streak! Keep spreading joy!")
 
-# Daily kindness challenge
-st.subheader("Today's Kindness Challenge")
+
 
 st.markdown(f"**Try this today:** {st.session_state.daily_suggestion}")
 
@@ -129,7 +128,8 @@ with st.form("daily_challenge_form"):
     submit_daily = st.form_submit_button("Submit")
     new_challenge = st.form_submit_button("Get a New Challenge")
 
-
+# Daily kindness challenge
+st.subheader("Today's Kindness Challenge")
 daily_suggestion = random.choice(
     [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
 )
