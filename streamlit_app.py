@@ -163,13 +163,16 @@ with st.form("daily_challenge_form", clear_on_submit=True):
 
     if submit_daily and completed:
         new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.daily_suggestion]})
-        df = pd.read_csv(DATA_FILE)
-        df = pd.concat([df, new_act], ignore_index=True)
-        df.to_csv(DATA_FILE, index=False)
-        st.session_state.daily_suggestion = random.choice(
-            [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
-        )
-        st.success("Kind act logged successfully!")
+        try:
+            df = pd.read_csv(DATA_FILE)
+            df = pd.concat([df, new_act], ignore_index=True)
+            df.to_csv(DATA_FILE, index=False)
+            st.session_state.daily_suggestion = random.choice(
+                [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
+            )
+            st.success("Kind act logged successfully!")
+        except Exception as e:
+            st.error(f"Failed to log act: {str(e)}")
 
     if new_challenge:
         st.session_state.daily_suggestion = random.choice(
@@ -201,31 +204,42 @@ if "custom_suggestion" in st.session_state:
 
         if submit_custom and custom_completed:
             new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.custom_suggestion]})
-            df = pd.read_csv(DATA_FILE)
-            df = pd.concat([df, new_act], ignore_index=True)
-            df.to_csv(DATA_FILE, index=False)
-            del st.session_state.custom_suggestion
-            st.success("Custom kind act logged successfully!")
+            try:
+                df = pd.read_csv(DATA_FILE)
+                df = pd.concat([df, new_act], ignore_index=True)
+                df.to_csv(DATA_FILE, index=False)
+                del st.session_state.custom_suggestion
+                st.success("Custom kind act logged successfully!")
+            except Exception as e:
+                st.error(f"Failed to log act: {str(e)}")
 
 # Log a kind act
 st.markdown('<p class="subheader">Log Your Kind Act</p>', unsafe_allow_html=True)
-with st.form("log_form"):
+with st.form("log_form", clear_on_submit=True):
     act = st.text_area("Describe the kind act you performed:", placeholder="e.g., Complimented a stranger")
     submit_log = st.form_submit_button("Log Act")
 
     if submit_log and act:
-        new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [act]})
-        df = pd.read_csv(DATA_FILE)
-        df = pd.concat([df, new_act], ignore_index=True)
-        df.to_csv(DATA_FILE, index=False)
-        st.success("Kind act logged successfully!")
+        new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [act.strip()]})
+        try:
+            df = pd.read_csv(DATA_FILE)
+            df = pd.concat([df, new_act], ignore_index=True)
+            df.to_csv(DATA_FILE, index=False)
+            st.success("Kind act logged successfully!")
+        except Exception as e:
+            st.error(f"Failed to log act: {str(e)}")
 
 # Display logged acts
 st.markdown('<p class="subheader">Your Kind Acts</p>', unsafe_allow_html=True)
-if not df.empty:
-    st.dataframe(df.sort_values(by="Date", ascending=False))
-else:
-    st.write("No kind acts logged yet. Start today!")
+try:
+    df = pd.read_csv(DATA_FILE)
+    if not df.empty:
+        df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+        st.dataframe(df.sort_values(by="Date", ascending=False)[["Date", "Act of Kindness"]], use_container_width=True)
+    else:
+        st.write("No kind acts logged yet. Start today!")
+except Exception as e:
+    st.error(f"Failed to display acts: {str(e)}")
 
 # Add footer with credit
 st.markdown("<hr>", unsafe_allow_html=True)
