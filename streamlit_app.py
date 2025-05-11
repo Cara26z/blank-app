@@ -80,12 +80,7 @@ def calculate_streak(df):
         else:
             break
     return streak
-    # Daily kindness challenge
-st.subheader("Today's Kindness Challenge")
-if "daily_suggestion" not in st.session_state:
-    st.session_state.daily_suggestion = random.choice(
-        [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
-    )
+  
 
     if submit_daily and completed:
         new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.daily_suggestion]})
