@@ -90,7 +90,7 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
     .main-title {
         font-family: 'Pacifico', cursive;
-        font-size: 3.5em;
+        font-size: 15em;
         text-align: center;
         background: linear-gradient(45deg, #e91e63, #f06292);
         -webkit-background-clip: text;
@@ -100,7 +100,7 @@ st.markdown("""
     }
     .subheader {
         color: #2196f3;
-        font-size: 1.5em;
+        font-size: 3.5em;
         font-weight: bold;
     }
     .stButton>button {
@@ -115,11 +115,11 @@ st.markdown("""
         color: #f57c00;
         font-style: italic;
         text-align: center;
-        font-size: 1.2em;
+        font-size: 2.5em;
     }
     .streak {
         color: #d81b60;
-        font-size: 1.3em;
+        font-size: 2.5em;
         text-align: center;
         font-weight: bold;
     }
@@ -181,15 +181,11 @@ with st.form("suggestion_form"):
     budget = st.selectbox("Select your budget:", ["Free", "Small Budget", "Big Budget"])
     context = st.selectbox("Where are you?", ["From Home", "Out and About"])
     submit_suggestion = st.form_submit_button("Get Idea")
-
-    if submit_suggestion:
-        suggestions = KINDNESS_SUGGESTIONS.get(budget, {}).get(context, [])
-        if suggestions:
-            suggestion = random.choice(suggestions)
-            st.success(f"**Kindness Idea:** {suggestion}")
-        else:
-            st.error("No suggestions available for this combination.")
-
+# Form to check off or get a new challenge
+with st.form(f"**Kindness Idea:** {suggestion}", clear_on_submit=True):
+    completed = st.checkbox("I completed this act!", key="daily_completed")
+    submit_daily = st.form_submit_button("Submit")
+    
 # Log a kind act
 st.markdown('<p class="subheader">Log Your Kind Act</p>', unsafe_allow_html=True)
 with st.form("log_form"):
