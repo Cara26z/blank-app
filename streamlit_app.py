@@ -23,7 +23,7 @@ KINDNESS_SUGGESTIONS = {
             "Create and share a playlist of uplifting songs for someone."
         ],
         "Out and About": [
-            "Smile and say hello to a stranger to spread positivity.",
+            "Smile and say hello to someone to spread positivity.",
             "Leave a kind note on someone's car or doorstep.",
             "Help someone carry their groceries or heavy bags.",
             "Compliment a service worker for their hard work.",
@@ -32,34 +32,34 @@ KINDNESS_SUGGESTIONS = {
     },
     "Small Budget": {
         "From Home": [
-            "Send a small care package with snacks to a friend ($5-$10).",
-            "Buy and send an e-gift card for coffee to cheer someone up ($5).",
-            "Order a small plant online for a loved one to brighten their space ($10).",
-            "Donate a small amount to a local charity online ($5-$15).",
-            "Purchase and send a digital book to inspire someone ($5-$10)."
+            "Send a small care package with snacks to a friend.",
+            "Buy and send an e-gift card for coffee to cheer someone up.",
+            "Order a small plant online for a loved one to brighten their space).",
+            "Donate a small amount to a local charity online.",
+            "Purchase and send a digital book to inspire someone."
         ],
         "Out and About": [
-            "Buy a coffee for the person behind you in line ($5).",
-            "Leave a generous tip for a server or barista ($5-$10).",
-            "Purchase a small treat for a coworker or neighbor ($5).",
-            "Buy flowers to give to someone you meet ($5-$10).",
-            "Pay for a stranger's parking meter or bus fare ($2-$5)."
+            "Buy a coffee for the person behind you in line.",
+            "Leave a generous tip for a server or barista.",
+            "Purchase a small treat for a coworker or neighbor.",
+            "Buy flowers to give to someone you meet).",
+            "Pay for a stranger's parking meter or bus fare."
         ]
     },
     "Big Budget": {
         "From Home": [
-            "Sponsor a child's education through a charity ($50-$100).",
-            "Order a large meal delivery for a family in need ($30-$50).",
-            "Purchase and send a gift basket to a friend or colleague ($50).",
-            "Donate to a community project or fundraiser online ($50-$100).",
-            "Buy and ship supplies for a local animal shelter ($50-$75)."
+            "Sponsor a child's education through a charity.",
+            "Order a large meal delivery for a family in need.",
+            "Purchase and send a gift basket to a friend or colleague.",
+            "Donate to a community project or fundraiser online.",
+            "Buy and ship supplies for a local animal shelter."
         ],
         "Out and About": [
-            "Pay for a stranger's groceries at the store ($50-$100).",
-            "Treat a group of friends to a meal out ($50-$100).",
-            "Buy books or supplies for a local school or library ($50-$75).",
-            "Cover the cost of someone's pet adoption fee ($100).",
-            "Gift a large tip to a street performer or service worker ($50)."
+            "Pay for a stranger's groceries at the store.",
+            "Treat a group of friends to a meal out.",
+            "Buy books or supplies for a local school or library.",
+            "Cover the cost of someone's pet adoption fee.",
+            "Gift a large tip to a street performer or service worker."
         ]
     }
 }
