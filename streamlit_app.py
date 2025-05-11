@@ -146,29 +146,35 @@ if "daily_suggestion" not in st.session_state:
     st.session_state.daily_suggestion = random.choice(
         [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
     )
+if "completed" not in st.session_state:
+    st.session_state.completed = False
 
 st.write(f"**Try this today:** {st.session_state.daily_suggestion}")
 
 # Form to check off or get a new challenge
 with st.form("daily_challenge_form"):
-    completed = st.checkbox("I completed this act!")
+    st.session_state.completed = st.checkbox("I completed this act!", value=st.session_state.completed)
     submit_daily = st.form_submit_button("Submit")
+    new_challenge = st.form_submit_button("Get a New Challenge")
 
-    if submit_daily and completed:
+    if submit_daily and st.session_state.completed:
         new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.daily_suggestion]})
         df = pd.read_csv(DATA_FILE)
         df = pd.concat([df, new_act], ignore_index=True)
         df.to_csv(DATA_FILE, index=False)
         st.success("Kind act logged successfully!")
-        # Reset daily suggestion
+        # Reset daily suggestion and checkbox
         st.session_state.daily_suggestion = random.choice(
             [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
         )
+        st.session_state.completed = False
+        st.experimental_rerun()
 
     if new_challenge:
         st.session_state.daily_suggestion = random.choice(
             [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
         )
+        st.session_state.completed = False
         st.experimental_rerun()
 
 # Get a tailored suggestion
@@ -187,7 +193,7 @@ with st.form("suggestion_form"):
             st.error("No suggestions available for this combination.")
 
 # Log a kind act
-st.markdown('<p class="subheader">Log Your Own Kind Act</p>', unsafe_allow_html=True)
+st.markdown('<p class="subheader">Log Your Kind Act</p>', unsafe_allow_html=True)
 with st.form("log_form"):
     act = st.text_area("Describe the kind act you performed:", placeholder="e.g., Bought coffee for a stranger")
     submit_log = st.form_submit_button("Log Act")
@@ -211,4 +217,4 @@ st.markdown('<p class="quote">"No act of kindness, no matter how small, is ever 
 
 # Add footer with credit
 st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown('<p class="footer">This App was made with love and pure intention by Cara</p>', unsafe_allow_html=True)
+st.markdown('<p class="footer">Made by Cara</p>', unsafe_allow_html=True)
