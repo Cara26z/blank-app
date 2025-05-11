@@ -80,6 +80,37 @@ def calculate_streak(df):
         else:
             break
     return streak
+    # Daily kindness challenge
+st.subheader("Today's Kindness Challenge")
+if "daily_suggestion" not in st.session_state:
+    st.session_state.daily_suggestion = random.choice(
+        [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
+    )
+
+st.markdown(f"**Try this today:** {st.session_state.daily_suggestion}")
+
+# Form to check off or get a new challenge
+with st.form("daily_challenge_form"):
+    completed = st.checkbox("I completed this act!")
+    submit_daily = st.form_submit_button("Submit")
+    new_challenge = st.form_submit_button("Get a New Challenge")
+
+    if submit_daily and completed:
+        new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.daily_suggestion]})
+        df = pd.read_csv(DATA_FILE)
+        df = pd.concat([df, new_act], ignore_index=True)
+        df.to_csv(DATA_FILE, index=False)
+        st.success("Kind act logged successfully!")
+        # Reset daily suggestion to encourage a new act tomorrow
+        st.session_state.daily_suggestion = random.choice(
+            [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
+        )
+
+    if new_challenge:
+        st.session_state.daily_suggestion = random.choice(
+            [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
+        )
+        st.experimental_rerun()
 
 # Streamlit app title
 st.title("Daily Kindness Challenge")
