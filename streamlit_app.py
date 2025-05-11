@@ -90,7 +90,7 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
     .main-title {
         font-family: 'Pacifico', cursive;
-        font-size: 15em;
+        font-size: 4em;
         text-align: center;
         background: linear-gradient(45deg, #e91e63, #f06292);
         -webkit-background-clip: text;
@@ -100,7 +100,7 @@ st.markdown("""
     }
     .subheader {
         color: #2196f3;
-        font-size: 3.5em;
+        font-size: 1.8em;
         font-weight: bold;
     }
     .stButton>button {
@@ -115,11 +115,11 @@ st.markdown("""
         color: #f57c00;
         font-style: italic;
         text-align: center;
-        font-size: 2.5em;
+        font-size: 1.3em;
     }
     .streak {
         color: #d81b60;
-        font-size: 2.5em;
+        font-size: 1.5em;
         text-align: center;
         font-weight: bold;
     }
@@ -131,14 +131,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Streamlit app title
-st.markdown('<p class="main-title">Daily Kindness Challenge</p>', unsafe_allow_html=True)
-st.write("Get inspired with kindness ideas, track your acts, and build a streak to spread joy!")
+# Streamlit app title and quote
+st.markdown('<p class="main-title">Be a Kind Human</p>', unsafe_allow_html=True)
+st.markdown('<p class="quote">"No act of kindness, no matter how small, is ever wasted." — Aesop</p>', unsafe_allow_html=True)
 
 # Display streak
 df = pd.read_csv(DATA_FILE)
 streak = calculate_streak(df)
-st.markdown(f'<p class="streak">Your Kindness Streak: {streak} Day{"s" if streak != 1 else ""}!</p>', unsafe_allow_html=True)
+st.markdown('<p class="subheader">Daily Kindness Streak</p>', unsafe_allow_html=True)
+st.markdown(f'<p class="streak">{streak} Day{"s" if streak != 1 else ""}</p>', unsafe_allow_html=True)
 
 # Celebrate milestones
 if streak in [5, 10, 30]:
@@ -175,21 +176,41 @@ with st.form("daily_challenge_form", clear_on_submit=True):
             [act for budget in KINDNESS_SUGGESTIONS for context in KINDNESS_SUGGESTIONS[budget] for act in KINDNESS_SUGGESTIONS[budget][context]]
         )
 
-# Get a tailored suggestion
+# Get a custom kindness idea
 st.markdown('<p class="subheader">Get a Custom Kindness Idea</p>', unsafe_allow_html=True)
-with st.form("suggestion_form"):
+with st.form("suggestion_form", clear_on_submit=True):
     budget = st.selectbox("Select your budget:", ["Free", "Small Budget", "Big Budget"])
     context = st.selectbox("Where are you?", ["From Home", "Out and About"])
     submit_suggestion = st.form_submit_button("Get Idea")
-# Form to check off or get a new challenge
-with st.form(f"**Kindness Idea:** {suggestion}", clear_on_submit=True):
-    completed = st.checkbox("I completed this act!", key="daily_completed")
-    submit_daily = st.form_submit_button("Submit")
-    
+
+    if submit_suggestion:
+        suggestions = KINDNESS_SUGGESTIONS.get(budget, {}).get(context, [])
+        if suggestions:
+            suggestion = random.choice(suggestions)
+            st.session_state.custom_suggestion = suggestion
+            st.success(f"**Kindness Idea:** {suggestion}")
+        else:
+            st.error("No suggestions available for this combination.")
+
+# Form to submit custom kindness idea
+if "custom_suggestion" in st.session_state:
+    with st.form("custom_challenge_form", clear_on_submit=True):
+        st.write(f"**Complete this idea:** {st.session_state.custom_suggestion}")
+        custom_completed = st.checkbox("I completed this act!", key="custom_completed")
+        submit_custom = st.form_submit_button("Submit")
+
+        if submit_custom and custom_completed:
+            new_act = pd.DataFrame({"Date": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "Act of Kindness": [st.session_state.custom_suggestion]})
+            df = pd.read_csv(DATA_FILE)
+            df = pd.concat([df, new_act], ignore_index=True)
+            df.to_csv(DATA_FILE, index=False)
+            del st.session_state.custom_suggestion
+            st.success("Custom kind act logged successfully!")
+
 # Log a kind act
 st.markdown('<p class="subheader">Log Your Kind Act</p>', unsafe_allow_html=True)
 with st.form("log_form"):
-    act = st.text_area("Describe the kind act you performed:", placeholder="e.g., Bought coffee for a stranger")
+    act = st.text_area("Describe the kind act you performed:", placeholder="e.g., Complimented a stranger")
     submit_log = st.form_submit_button("Log Act")
 
     if submit_log and act:
@@ -205,9 +226,6 @@ if not df.empty:
     st.dataframe(df.sort_values(by="Date", ascending=False))
 else:
     st.write("No kind acts logged yet. Start today!")
-
-# Add a motivational quote
-st.markdown('<p class="quote">"No act of kindness, no matter how small, is ever wasted." — Aesop</p>', unsafe_allow_html=True)
 
 # Add footer with credit
 st.markdown("<hr>", unsafe_allow_html=True)
